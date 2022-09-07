@@ -8,7 +8,6 @@ Run as:
 from pathlib import Path
 import hashlib
 
-
 def file_hash(filename):
     """ Get byte contents of file `filename`, return SHA1 hash
 
@@ -23,10 +22,11 @@ def file_hash(filename):
         SHA1 hexadecimal hash string for contents of `filename`.
     """
     # Open the file, read contents as bytes.
+    fpath = Path(filename)
+    fcontents = fpath.read_bytes()
     # Calculate, return SHA1 has on the bytes from the file.
-    # This is a placeholder, replace it to write your solution.
-    raise NotImplementedError(
-        'This is just a template -- you are expected to code this.')
+    hash_value = hashlib.sha1(fcontents).hexdigest()
+    return hash_value
 
 
 def validate_data(data_directory):
@@ -48,13 +48,20 @@ def validate_data(data_directory):
         ``data_hashes.txt`` file.
     """
     # Read lines from ``data_hashes.txt`` file.
+    parent_dir = Path(data_directory)
+    hash_pth = parent_dir / 'hash_list.txt'
+    text_file = hash_pth.read_text()
     # Split into SHA1 hash and filename
-    # Calculate actual hash for given filename.
-    # If hash for filename is not the same as the one in the file, raise
-    # ValueError
-    # This is a placeholder, replace it to write your solution.
-    raise NotImplementedError(
-        'This is just a template -- fill out the template with code.')
+    for line in text_file.splitlines():
+        # Calculate actual hash for given filename.
+        hash_value, file_name = line.split()
+        hash_calc = file_hash(parent_dir.parent/file_name)
+        # If hash for filename is not the same as the one in the file, raise
+        # ValueError
+        if hash_calc != hash_value:
+            raise ValueError(f'{file_name} changed, hashes do not match')
+    print(f'{data_directory} is not corrupted, all the hashes match')
+    return
 
 
 def main():
