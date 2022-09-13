@@ -3,7 +3,8 @@
 
 # Any imports you need
 # +++your code here+++
-
+import numpy as np
+import nibabel as nib
 
 def dvars(img):
     """ Calculate dvars metric on Nibabel image `img`
@@ -29,4 +30,12 @@ def dvars(img):
     # You may be be able to solve this in four lines, without a loop.
     # But solve it any way you can.
     # This is a placeholder, replace it to write your solution.
-    raise NotImplementedError('Code up this function')
+    # get the actual data from the image
+    data = img.get_fdata()
+    # reshape image from 4D to 2D
+    data_2D = data.reshape(-1,data.shape[-1])
+    # calculate the dvars metric
+    dvars = np.array([np.sqrt(np.mean(np.square(data_2D[...,i]-data_2D[...,i+1])))
+                      for i in range(data_2D.shape[-1]-1)])
+    return dvars
+
